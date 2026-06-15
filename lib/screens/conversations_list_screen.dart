@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models/chat_conversation.dart';
 import '../widgets/conversation_card.dart';
@@ -113,7 +112,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
       SnackBar(
         content: Text(
           'Conversation deleted',
-          style: GoogleFonts.inter(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
             color: ZenColors.paperSheet,
@@ -174,7 +173,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
       titleSpacing: 0,
       title: Text(
         'History',
-        style: GoogleFonts.sourceSerif4(
+        style: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           height: 32 / 24,
@@ -212,7 +211,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
                 controller: _searchController,
                 focusNode: _searchFocusNode,
                 onChanged: (value) => setState(() => _searchQuery = value),
-                style: GoogleFonts.inter(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   height: 20 / 14,
@@ -220,7 +219,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
                 ),
                 decoration: InputDecoration(
                   hintText: 'Search conversations...',
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     height: 20 / 14,
@@ -298,7 +297,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
             const SizedBox(height: 16),
             Text(
               isSearching ? 'No conversations found' : 'No conversations yet',
-              style: GoogleFonts.inter(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 height: 22 / 16,
@@ -311,7 +310,7 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
                   ? 'Try a different search term'
                   : 'Start a chat with Zen Assistant\nto see your conversations here',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
                 height: 18 / 13,
@@ -336,7 +335,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.inter(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           height: 14 / 11,

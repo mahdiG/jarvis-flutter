@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models/chat_message.dart';
 
@@ -50,7 +49,7 @@ class MessageBubble extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Zen',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     height: 14 / 11,
@@ -95,7 +94,7 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   Text(
                     message.content,
-                    style: GoogleFonts.sourceSerif4(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       height: 28 / 20,
@@ -106,7 +105,7 @@ class MessageBubble extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       _formatTime(message.timestamp),
-                      style: GoogleFonts.inter(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         height: 14 / 11,
@@ -156,7 +155,7 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   Text(
                     message.content,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       height: 20 / 14,
@@ -167,7 +166,7 @@ class MessageBubble extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       _formatTime(message.timestamp),
-                      style: GoogleFonts.inter(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         height: 14 / 11,

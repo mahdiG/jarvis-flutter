@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart' hide Config;
 import '../app_theme.dart';
 import '../config.dart';
 import '../models/launcher_app.dart';
@@ -102,7 +101,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
           children: [
             Text(
               title,
-              style: GoogleFonts.sourceSerif4(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 height: 28 / 20,
@@ -112,7 +111,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
             const SizedBox(height: 12),
             Text(
               'Coming soon…',
-              style: GoogleFonts.inter(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 height: 20 / 14,
@@ -153,7 +152,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                           // Greeting
                           Text(
                             _greeting(),
-                            style: GoogleFonts.sourceSerif4(
+                            style: TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.w600,
                               height: 38 / 30,
@@ -162,7 +161,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 80),
 
                           // Favorites list
                           ..._favoriteApps.take(Config.maxFavoriteApps).map(
@@ -181,7 +180,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                             onTap: _openAllApps,
                             child: Text(
                               'More',
-                              style: GoogleFonts.sourceSerif4(
+                              style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 height: 28 / 20,
@@ -226,7 +225,7 @@ class _AppTextButton extends StatelessWidget {
         onTap: onTap,
         child: Text(
           label,
-          style: GoogleFonts.sourceSerif4(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
             height: 28 / 20,

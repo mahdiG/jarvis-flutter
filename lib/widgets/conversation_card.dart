@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../models/chat_conversation.dart';
 
@@ -83,7 +82,7 @@ class ConversationCard extends StatelessWidget {
                               conversation.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 height: 20 / 14,
@@ -95,7 +94,7 @@ class ConversationCard extends StatelessWidget {
                           // Timestamp
                           Text(
                             _formatTimestamp(conversation.lastMessageAt),
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               height: 14 / 11,
@@ -112,7 +111,7 @@ class ConversationCard extends StatelessWidget {
                         conversation.previewText,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                           height: 18 / 13,
@@ -132,7 +131,7 @@ class ConversationCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '${conversation.messageCount} messages',
-                            style: GoogleFonts.inter(
+                            style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               height: 14 / 11,

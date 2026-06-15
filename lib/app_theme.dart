@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Custom Zen color palette matching the Stitch design
 class ZenColors {
@@ -54,45 +53,45 @@ class ZenTheme {
     );
 
     final textTheme = TextTheme(
-      headlineLarge: GoogleFonts.sourceSerif4(
+      headlineLarge: TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.w600,
         height: 38 / 30,
         letterSpacing: -0.01,
         color: ZenColors.ink,
       ),
-      headlineMedium: GoogleFonts.sourceSerif4(
+      headlineMedium: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         height: 32 / 24,
         color: ZenColors.ink,
       ),
-      headlineSmall: GoogleFonts.sourceSerif4(
+      headlineSmall: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w500,
         height: 28 / 20,
         color: ZenColors.ink,
       ),
-      bodyLarge: GoogleFonts.inter(
+      bodyLarge: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         height: 24 / 16,
         color: ZenColors.ink,
       ),
-      bodyMedium: GoogleFonts.inter(
+      bodyMedium: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 20 / 14,
         color: ZenColors.onSurfaceVariant,
       ),
-      labelLarge: GoogleFonts.inter(
+      labelLarge: TextStyle(
         fontSize: 13,
         fontWeight: FontWeight.w600,
         height: 16 / 13,
         letterSpacing: 0.05,
         color: ZenColors.ink,
       ),
-      labelMedium: GoogleFonts.inter(
+      labelMedium: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w500,
         height: 14 / 11,

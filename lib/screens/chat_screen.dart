@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../app_theme.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/typing_indicator.dart';
@@ -186,7 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Center(
                 child: Text(
                   'Zen Assistant',
-                  style: GoogleFonts.sourceSerif4(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
                     height: 32 / 24,
@@ -301,7 +300,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         maxLines: 4,
                         minLines: 1,
                         onSubmitted: _isSendEnabled ? (_) => _sendMessage() : null,
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           height: 20 / 14,
@@ -309,7 +308,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                         decoration: InputDecoration(
                           hintText: 'Write a thought...',
-                          hintStyle: GoogleFonts.inter(
+                          hintStyle: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
                             height: 20 / 14,
@@ -354,7 +353,7 @@ class _DateMarker extends StatelessWidget {
     return Center(
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.inter(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
           height: 14 / 11,
@@ -385,7 +384,7 @@ class _AiMessageHeader extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             'Zen',
-            style: GoogleFonts.inter(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               height: 14 / 11,
@@ -419,16 +418,16 @@ class _QuickChip extends StatelessWidget {
             color: ZenColors.secondaryContainer.withValues(alpha: 0.6),
           ),
         ),
-        child: Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            height: 14 / 11,
-            letterSpacing: 0.02,
-            color: ZenColors.onSecondaryContainer,
-          ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          height: 14 / 11,
+          letterSpacing: 0.02,
+          color: ZenColors.onSecondaryContainer,
         ),
+      ),
       ),
     );
   }
