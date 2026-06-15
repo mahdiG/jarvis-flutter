@@ -149,7 +149,9 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
       backgroundColor: ZenColors.paperBg,
       body: Column(
         children: [
@@ -219,6 +221,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 }
