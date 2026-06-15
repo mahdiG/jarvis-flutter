@@ -45,10 +45,10 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
         // and filter out any that are no longer installed.
         _favoriteApps = saved.map((savedFavorite) {
           final matchedApp = installedApps.cast<LauncherApp?>().firstWhere(
-                (installedApp) =>
-                    installedApp!.packageName == savedFavorite.packageName,
-                orElse: () => null,
-              );
+            (installedApp) =>
+                installedApp!.packageName == savedFavorite.packageName,
+            orElse: () => null,
+          );
           if (matchedApp != null) {
             return matchedApp.copyWith(
               isFavorite: true,
@@ -96,9 +96,9 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
         _showPlaceholderSheet('Timeline');
         break;
       case 3: // Chat — navigate to chat screen
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const ChatScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
         break;
     }
   }
@@ -167,94 +167,94 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-      backgroundColor: ZenColors.paperBg,
-      body: Column(
-        children: [
-          // Main content area
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 720),
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Apps icon at top-right
-                          SafeArea(
-                            bottom: false,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.apps,
-                                      color: ZenColors.outline,
+        backgroundColor: ZenColors.paperBg,
+        body: Column(
+          children: [
+            // Main content area
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 720),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Apps icon at top-right
+                            SafeArea(
+                              bottom: false,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.apps,
+                                        color: ZenColors.outline,
+                                      ),
+                                      onPressed: _openAllApps,
                                     ),
-                                    onPressed: _openAllApps,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
 
-                          // Golden-ratio spacer (5:8 ≈ 1:1.618)
-                          Expanded(
-                            flex: 5,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onDoubleTap: _lockScreen,
-                              child: const SizedBox.expand(),
+                            // Golden-ratio spacer (5:8 ≈ 1:1.618)
+                            Expanded(
+                              flex: 5,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onDoubleTap: _lockScreen,
+                                child: const SizedBox.expand(),
+                              ),
                             ),
-                          ),
 
-                          // Favorites list
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
+                            // Favorites list
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: _favoriteApps
+                                    .take(Config.maxFavoriteApps)
+                                    .map(
+                                      (app) => _AppTextButton(
+                                        label: app.name,
+                                        onTap: () {
+                                          AppListService.launchApp(
+                                            app.packageName,
+                                          );
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: _favoriteApps
-                                  .take(Config.maxFavoriteApps)
-                                  .map(
-                                    (app) => _AppTextButton(
-                                      label: app.name,
-                                      onTap: () {
-                                        AppListService.launchApp(
-                                          app.packageName,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          ),
 
-                          Expanded(
-                            flex: 8,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onDoubleTap: _lockScreen,
-                              child: const SizedBox.expand(),
+                            Expanded(
+                              flex: 8,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onDoubleTap: _lockScreen,
+                                child: const SizedBox.expand(),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                ),
               ),
             ),
-          ),
 
-          // Bottom navigation dock
-          LauncherBottomNav(
-            currentIndex: _bottomNavIndex,
-            onTabSelected: _onBottomNavTabSelected,
-          ),
-        ],
+            // Bottom navigation dock
+            LauncherBottomNav(
+              currentIndex: _bottomNavIndex,
+              onTabSelected: _onBottomNavTabSelected,
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }
@@ -264,10 +264,7 @@ class _AppTextButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _AppTextButton({
-    required this.label,
-    required this.onTap,
-  });
+  const _AppTextButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

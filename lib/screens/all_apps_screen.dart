@@ -243,14 +243,21 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                             ),
                             trailing: GestureDetector(
                               onTap: () => _toggleFavorite(app),
-                              child: Icon(
-                                isFavorite
-                                    ? Icons.star_rounded
-                                    : Icons.star_outline_rounded,
-                                size: 24,
-                                color: isFavorite
-                                    ? ZenColors.onSecondaryContainer
-                                    : ZenColors.outline,
+                              behavior: HitTestBehavior.opaque,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                child: Icon(
+                                  isFavorite
+                                      ? Icons.star_rounded
+                                      : Icons.star_outline_rounded,
+                                  size: 24,
+                                  color: isFavorite
+                                      ? ZenColors.onSecondaryContainer
+                                      : ZenColors.outline,
+                                ),
                               ),
                             ),
                             onTap: () {
