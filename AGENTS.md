@@ -125,36 +125,71 @@ Config.launcherEnabled  // defaults to true
 
 ## Stitch MCP Integration
 
-This project uses Google Stitch MCP for UI design. To fetch or update designs:
+This project uses Google Stitch MCP for UI design. The MCP server is named `stitch` and is configured in `cline_mcp_settings.json`.
+
+> ⚠️ **AI agents**: Always use server name `stitch`, NOT `github.com/stitch-tools/stitch-mcp`.
+
+To fetch or update designs:
 
 ```mermaid
 flowchart LR
     A[list_projects] --> B[find "jarvis_flutter" project]
-    B --> C[list_screens]
-    C --> D[get_screen]
-    D --> E[extract tokens & layout]
-    E --> F[implement in Flutter]
+    B --> C[get_project]
+    C --> D[list_screens]
+    D --> E[get_screen]
+    E --> F[extract tokens & layout]
+    F --> G[implement in Flutter]
 ```
+
+### 🌟 CRITICAL: Correct Parameter Formats
+
+Google Stitch uses **resource name-based addressing**. This is the #1 AI agent mistake.
+
+| Tool | ❌ Wrong | ✅ Correct |
+|------|----------|------------|
+| `get_project` | `{projectId: "abc123"}` | `{name: "projects/abc123"}` |
+| `list_screens` | `{projectId: "abc123"}` | `{parent: "projects/abc123"}` |
+| `get_screen` | `{screenId: "xyz789"}` | `{name: "projects/abc123/screens/xyz789"}` |
+| `create_design_system` | `{projectId, name: "DS"}` | `{projectId, designSystem: {displayName, theme}}` |
 
 ### Available MCP Tools
 
-- `list_projects` - List all design projects
-- `get_project(projectId)` - Get project details and screen list
-- `list_screens(projectId)` - List all screens in a project
-- `get_screen(screenId)` - Get full layout tree and styles
-- `get_screen_html(screenId)` - Get HTML+CSS preview
-- `get_screen_data(screenId)` - Get structured JSON data
-- `list_design_systems(projectId)` - List design systems
-- `get_design_system(designSystemId)` - Get full token set
+**✅ These tools exist and work:**
+
+- `list_projects` — List all design projects (no params needed)
+- `get_project({name: "projects/{project}"})` — Get project details and screen list
+- `list_screens({parent: "projects/{project}"})` — List all screens in a project
+- `get_screen({name: "projects/{project}/screens/{screen}"})` — Get full layout tree and styles
+- `list_design_systems({projectId})` — List design systems (includes theme data)
+- `create_design_system({projectId, designSystem: {displayName, theme}})` — Create new design system
+- `create_design_system_from_design_md({projectId, selectedScreenInstance})` — Create DS from screen data
+- `update_design_system({name, projectId, designSystem})` — Update existing design system
+- `apply_design_system({projectId, selectedScreenInstances})` — Apply design system to screens
+- `upload_design_md({projectId, designMdBase64})` — Upload base64-encoded design spec
+- `generate_screen_from_text({projectId, prompt})` — AI-generate a screen (takes 30–60s)
+- `edit_screens({projectId, selectedScreenIds, prompt})` — Bulk edit screens
+- `generate_variants({projectId, selectedScreenIds, variantOptions})` — Generate screen variants
+
+**❌ These tools do NOT exist (do NOT call):**
+
+- `get_screen_html` — **does not exist**
+- `get_screen_data` — **does not exist**
+- `get_design_system` — **does not exist**
 
 ### Workflow for Implementing Stitch Designs
 
-1. Call `list_projects` → find the "jarvis_flutter" project
-2. Call `get_project(projectId)` → get screens list
-3. Call `list_screens(projectId)` → identify target screen
-4. Call `get_screen(screenId)` → extract layout + styles + colors
-5. Call `list_design_systems(projectId)` → check for existing design system
+1. Call `list_projects` → find the "jarvis_flutter" project by `displayName`
+2. Call `get_project({name: "projects/{project}"})` → get screen list
+3. Call `list_screens({parent: "projects/{project}"})` → identify target screen
+4. Call `get_screen({name: "projects/{project}/screens/{screen}"})` → extract layout + styles + colors
+5. Call `list_design_systems({projectId})` → check for existing design system (theme data is in response)
 6. Implement Flutter code matching the extracted tokens and layout
+
+### Auto-Approval
+
+Only `list_projects` is auto-approved. All other tools (including `get_screen`, `list_screens`, `create_design_system`) require **explicit user approval**. Wait for approval — do not try alternative approaches.
+
+For the full reference, see `docs/stitch-mcp-reference.md`.
 
 ## Building & Running
 
