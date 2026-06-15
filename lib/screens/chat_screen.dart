@@ -4,6 +4,7 @@ import '../app_theme.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/typing_indicator.dart';
 import '../models/chat_message.dart';
+import 'conversations_list_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -205,7 +206,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icons.history_rounded,
                   color: ZenColors.ink,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const ConversationsListScreen(),
+                    ),
+                  );
+                },
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
