@@ -1,8 +1,5 @@
 package com.example.jarvis_flutter
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -28,6 +25,7 @@ class MainActivity : FlutterActivity() {
                         val apps = getInstalledApps()
                         result.success(apps)
                     }
+
                     "launchApp" -> {
                         val packageName = call.argument<String>("packageName")
                         if (packageName != null) {
@@ -37,26 +35,27 @@ class MainActivity : FlutterActivity() {
                             result.error("INVALID_ARG", "packageName required", null)
                         }
                     }
+
                     "lockScreen" -> {
-                        val success = lockScreen()
+                        val success = LockAccessibilityService.lockScreen()
                         result.success(success)
                     }
-                    "isDeviceAdmin" -> {
-                        result.success(isDeviceAdmin())
+
+                    "isServiceRunning" -> {
+                        result.success(LockAccessibilityService.isRunning())
                     }
-                    "requestDeviceAdmin" -> {
-                        requestDeviceAdmin()
+
+                    "requestEnableService" -> {
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                        startActivity(intent)
                         result.success(true)
                     }
+
                     else -> result.notImplemented()
                 }
             }
     }
 
-    /**
-     * Queries the PackageManager for all installed apps that have a
-     * launcher intent filter and returns them as a list of maps.
-     */
     private fun getInstalledApps(): List<Map<String, String>> {
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
@@ -74,57 +73,6 @@ class MainActivity : FlutterActivity() {
             .sortedBy { it["name"]?.lowercase() }
     }
 
-    /**
-     * Lock the screen via DevicePolicyManager.
-     *
-     * Only works if the app is an active device admin.
-     * Returns true if the screen was locked, false otherwise.
-     */
-    private fun lockScreen(): Boolean {
-        return try {
-            val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-            val componentName = ComponentName(this, AdminReceiver::class.java)
-            if (dpm.isAdminActive(componentName)) {
-                dpm.lockNow()
-                true
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    /**
-     * Whether this app is an active device admin.
-     */
-    private fun isDeviceAdmin(): Boolean {
-        val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        val componentName = ComponentName(this, AdminReceiver::class.java)
-        return dpm.isAdminActive(componentName)
-    }
-
-    /**
-     * Open the system "Activate device admin" screen so the user can
-     * grant this app device admin permission.
-     */
-    private fun requestDeviceAdmin() {
-        val componentName = ComponentName(this, AdminReceiver::class.java)
-        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
-            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
-            putExtra(
-                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Zen Assistant needs device admin permission to lock the screen when you double-tap on the launcher."
-            )
-        }
-        startActivity(intent)
-    }
-
-    /**
-     * Launches an app by its package name.
-     *
-     * Returns true if the launch intent was resolved and sent, false otherwise.
-     */
     private fun launchApp(packageName: String): Boolean {
         return try {
             val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
@@ -132,7 +80,6 @@ class MainActivity : FlutterActivity() {
                 startActivity(launchIntent)
                 true
             } else {
-                // Fallback: open the app's settings page or Google Play.
                 val fallbackIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.parse("package:$packageName")
                 }

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Zen Assistant uses this service to lock the screen when you double-tap on the launcher.</string>
+</resources>

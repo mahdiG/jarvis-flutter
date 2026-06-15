@@ -106,16 +106,18 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
 
   Future<void> _lockScreen() async {
     if (!mounted) return;
-    final isAdmin = await LockService.isDeviceAdmin();
-    if (!isAdmin) {
+    final isRunning = await LockService.isServiceRunning();
+    if (!isRunning) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Enable device admin to lock the screen'),
+          content: const Text(
+            'Enable Zen Assistant in Accessibility to lock by double-tap',
+          ),
           duration: const Duration(seconds: 4),
           action: SnackBarAction(
             label: 'Settings',
-            onPressed: () => LockService.requestDeviceAdmin(),
+            onPressed: () => LockService.requestEnableService(),
           ),
         ),
       );
@@ -189,6 +191,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                           Expanded(
                             flex: 2,
                             child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
                               onDoubleTap: _lockScreen,
                               child: const SizedBox.expand(),
                             ),
@@ -245,6 +248,7 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                           Expanded(
                             flex: 3,
                             child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
                               onDoubleTap: _lockScreen,
                               child: const SizedBox.expand(),
                             ),
