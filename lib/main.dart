@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 import 'config.dart';
 import 'screens/chat_screen.dart';
-import 'screens/zen_launcher_screen.dart';
+import 'screens/launcher_screen.dart';
 
 void main() {
   runApp(const ZenAssistantApp());

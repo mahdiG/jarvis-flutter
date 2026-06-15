@@ -13,9 +13,8 @@ import 'chat_screen.dart';
 ///
 /// Features:
 /// - Paper-textured background with warm Zen palette
-/// - Greeting + clock
 /// - Favorite apps list (text-only, reorderable)
-/// - "More" button to open the full app list
+/// - Apps icon to open the full app list
 /// - Bottom navigation dock (Tasks, Journal, Timeline, Chat)
 class ZenLauncherScreen extends StatefulWidget {
   const ZenLauncherScreen({super.key});
@@ -163,13 +162,6 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
     );
   }
 
-  String _greeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -186,10 +178,31 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Apps icon at top-right
+                          SafeArea(
+                            bottom: false,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: IconButton(
+                                    icon: Icon(
+                                      Icons.apps,
+                                      color: ZenColors.outline,
+                                    ),
+                                    onPressed: _openAllApps,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Golden-ratio spacer (5:8 ≈ 1:1.618)
                           Expanded(
-                            flex: 2,
+                            flex: 5,
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onDoubleTap: _lockScreen,
@@ -197,56 +210,31 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                             ),
                           ),
 
-                          GestureDetector(
-                            onDoubleTap: _lockScreen,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Greeting
-                                Text(
-                                  _greeting(),
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w600,
-                                    height: 38 / 30,
-                                    letterSpacing: -0.01,
-                                    color: ZenColors.ink,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 80),
-                              ],
-                            ),
-                          ),
-
                           // Favorites list
-                          ..._favoriteApps.take(Config.maxFavoriteApps).map(
-                                (app) => _AppTextButton(
-                                  label: app.name,
-                                  onTap: () {
-                                    AppListService.launchApp(app.packageName);
-                                  },
-                                ),
-                              ),
-
-                          const SizedBox(height: 16),
-
-                          // More button
-                          GestureDetector(
-                            onTap: _openAllApps,
-                            child: Text(
-                              'More',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                height: 28 / 20,
-                                color: ZenColors.outline,
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: _favoriteApps
+                                  .take(Config.maxFavoriteApps)
+                                  .map(
+                                    (app) => _AppTextButton(
+                                      label: app.name,
+                                      onTap: () {
+                                        AppListService.launchApp(
+                                          app.packageName,
+                                        );
+                                      },
+                                    ),
+                                  )
+                                  .toList(),
                             ),
                           ),
 
                           Expanded(
-                            flex: 3,
+                            flex: 8,
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onDoubleTap: _lockScreen,
@@ -284,15 +272,15 @@ class _AppTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: GestureDetector(
         onTap: onTap,
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            height: 28 / 20,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            height: 32 / 24,
             color: ZenColors.ink,
           ),
         ),
