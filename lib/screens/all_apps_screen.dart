@@ -39,39 +39,50 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
   }
 
   Future<void> _loadApps() async {
-    final apps = await AppListService.fetchInstalledApps();
-    setState(() {
-      _allApps = apps.map((app) {
-        final match = widget.currentFavorites.cast<LauncherApp?>().firstWhere(
-              (f) => f!.packageName == app.packageName,
-              orElse: () => null,
-            );
-        if (match != null) {
-          app.isFavorite = true;
-          app.favoriteOrder = match.favoriteOrder;
-        }
-        return app;
-      }).toList();
-      _allApps.sort((a, b) {
-        // Favorites first, then alphabetical
-        if (a.isFavorite && !b.isFavorite) return -1;
-        if (!a.isFavorite && b.isFavorite) return 1;
-        if (a.isFavorite && b.isFavorite) {
-          return a.favoriteOrder.compareTo(b.favoriteOrder);
-        }
-        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    try {
+      final installedApps = await AppListService.fetchInstalledApps();
+      setState(() {
+        _allApps = installedApps.map((installedApp) {
+          final matchedFavorite =
+              widget.currentFavorites.cast<LauncherApp?>().firstWhere(
+                    (favorite) =>
+                        favorite!.packageName == installedApp.packageName,
+                    orElse: () => null,
+                  );
+          if (matchedFavorite != null) {
+            installedApp.isFavorite = true;
+            installedApp.favoriteOrder = matchedFavorite.favoriteOrder;
+          }
+          return installedApp;
+        }).toList();
+        _allApps.sort((first, second) {
+          // Favorites first, then alphabetical
+          if (first.isFavorite && !second.isFavorite) return -1;
+          if (!first.isFavorite && second.isFavorite) return 1;
+          if (first.isFavorite && second.isFavorite) {
+            return first.favoriteOrder.compareTo(second.favoriteOrder);
+          }
+          return first.name
+              .toLowerCase()
+              .compareTo(second.name.toLowerCase());
+        });
+        _isLoading = false;
       });
-      _isLoading = false;
-    });
+    } catch (error) {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _toggleFavorite(LauncherApp app) {
     setState(() {
-      app.isFavorite = !app.isFavorite;
-      if (app.isFavorite) {
-        app.favoriteOrder = widget.currentFavorites.length;
-      } else {
+      final wasFavorite = app.isFavorite;
+      if (wasFavorite) {
+        app.isFavorite = false;
         app.favoriteOrder = -1;
+      } else {
+        app.isFavorite = true;
+        app.favoriteOrder =
+            _allApps.where((candidate) => candidate.isFavorite).length;
       }
     });
     _emitFavorites();
@@ -79,17 +90,18 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
 
   void _emitFavorites() {
     final favorites = _allApps
-        .where((a) => a.isFavorite)
+        .where((favoriteApp) => favoriteApp.isFavorite)
         .toList()
-      ..sort((a, b) => a.favoriteOrder.compareTo(b.favoriteOrder));
+      ..sort((first, second) =>
+          first.favoriteOrder.compareTo(second.favoriteOrder));
     widget.onFavoritesChanged(favorites);
   }
 
   List<LauncherApp> get _filteredApps {
     if (_searchQuery.isEmpty) return _allApps;
-    final q = _searchQuery.toLowerCase();
+    final query = _searchQuery.toLowerCase();
     return _allApps
-        .where((app) => app.name.toLowerCase().contains(q))
+        .where((app) => app.name.toLowerCase().contains(query))
         .toList();
   }
 
@@ -135,7 +147,8 @@ class _AllAppsScreenState extends State<AllAppsScreen> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      onChanged: (v) => setState(() => _searchQuery = v),
+                      onChanged: (value) =>
+                          setState(() => _searchQuery = value),
                       decoration: InputDecoration(
                         hintText: 'Search apps...',
                         hintStyle: TextStyle(

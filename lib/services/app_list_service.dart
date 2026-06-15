@@ -82,10 +82,10 @@ class AppListService {
 
       return result
           .map((entry) {
-            final map = entry as Map<dynamic, dynamic>;
+            final appData = entry as Map<dynamic, dynamic>;
             return LauncherApp(
-              name: map['name'] as String? ?? 'Unknown',
-              packageName: map['packageName'] as String? ?? '',
+              name: appData['name'] as String? ?? 'Unknown',
+              packageName: appData['packageName'] as String? ?? '',
             );
           })
           .where((app) => app.packageName.isNotEmpty)

@@ -3,6 +3,7 @@ import '../app_theme.dart';
 import '../config.dart';
 import '../models/launcher_app.dart';
 import '../services/app_list_service.dart';
+import '../services/favorites_service.dart';
 import '../widgets/launcher_bottom_nav.dart';
 import 'all_apps_screen.dart';
 import 'chat_screen.dart';
@@ -34,25 +35,40 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
   }
 
   Future<void> _loadFavorites() async {
-    final apps = await AppListService.fetchInstalledApps();
-    setState(() {
-      // Use default favorites, or try to match from installed apps
-      final defaults = AppListService.defaultFavorites;
-      _favoriteApps = defaults.map((fav) {
-        final match = apps.cast<LauncherApp?>().firstWhere(
-              (a) => a!.packageName == fav.packageName,
-              orElse: () => null,
+    try {
+      final installedApps = await AppListService.fetchInstalledApps();
+      final saved = await FavoritesService.loadWithDefaults(
+        defaults: AppListService.defaultFavorites,
+      );
+      setState(() {
+        // Match persisted favorites to installed apps (preserving order/stars)
+        // and filter out any that are no longer installed.
+        _favoriteApps = saved.map((savedFavorite) {
+          final matchedApp = installedApps.cast<LauncherApp?>().firstWhere(
+                (installedApp) =>
+                    installedApp!.packageName == savedFavorite.packageName,
+                orElse: () => null,
+              );
+          if (matchedApp != null) {
+            return matchedApp.copyWith(
+              isFavorite: true,
+              favoriteOrder: savedFavorite.favoriteOrder,
             );
-        return match ?? fav;
-      }).toList();
-      _isLoading = false;
-    });
+          }
+          return savedFavorite;
+        }).toList();
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _onFavoritesChanged(List<LauncherApp> newFavorites) {
     setState(() {
       _favoriteApps = List.from(newFavorites);
     });
+    FavoritesService.saveFavorites(newFavorites);
   }
 
   void _openAllApps() {

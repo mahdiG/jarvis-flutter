@@ -79,9 +79,9 @@ class _ConversationsListScreenState extends State<ConversationsListScreen> {
   List<ChatConversation> get _filteredConversations {
     if (_searchQuery.isEmpty) return _conversations;
     final query = _searchQuery.toLowerCase();
-    return _conversations.where((c) {
-      return c.title.toLowerCase().contains(query) ||
-          c.previewText.toLowerCase().contains(query);
+    return _conversations.where((conversation) {
+      return conversation.title.toLowerCase().contains(query) ||
+          conversation.previewText.toLowerCase().contains(query);
     }).toList();
   }
 

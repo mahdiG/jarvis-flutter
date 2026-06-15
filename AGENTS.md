@@ -69,6 +69,16 @@ android/
 - Chip gap: 8px
 - Bottom safe area: 32px
 
+## Code Style
+
+### Naming Conventions
+
+- **No one-letter variable names** (except `i`, `j`, `k` for loop indices in simple `for` loops, and `_` for unused parameters). Lambda parameters in collection methods (`map`, `where`, `firstWhere`, `sort`, etc.) must use descriptive names.
+  - ✅ `apps.where((installedApp) => installedApp.isFavorite)`
+  - ❌ `apps.where((a) => a.isFavorite)`
+  - ✅ `favorites.sort((first, second) => first.order.compareTo(second.order))`
+  - ❌ `favorites.sort((a, b) => a.order.compareTo(b.order))`
+
 ## Key Architecture Decisions
 
 - **Material 3** enabled with `useMaterial3: true`
