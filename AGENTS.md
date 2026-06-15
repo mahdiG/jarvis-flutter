@@ -2,24 +2,36 @@
 
 ## Project Overview
 
-A Flutter chat application called **Zen Assistant** - an AI-powered mindfulness and reflection companion with a calm, warm design aesthetic.
+A Flutter application called **Zen Assistant** — an AI-powered mindfulness and reflection companion with a calm, warm design aesthetic. The app also doubles as an **Android launcher** (Zen Launcher) that can replace the default home screen.
 
 ## Project Structure
 
 ```
 lib/
-├── main.dart                          # App entry point
+├── main.dart                          # App entry point (routes to launcher or chat)
 ├── app_theme.dart                     # Design system tokens (colors, typography, theme)
+├── config.dart                        # Feature flags (launcher enabled, etc.)
 ├── models/
 │   ├── chat_message.dart              # Message model (content, isUser, timestamp, etc.)
-│   └── chat_conversation.dart         # Conversation model (title, preview, metadata)
+│   ├── chat_conversation.dart         # Conversation model (title, preview, metadata)
+│   └── launcher_app.dart              # App entry model (name, packageName, isFavorite)
 ├── screens/
 │   ├── chat_screen.dart               # Main chat interface
-│   └── conversations_list_screen.dart # History/conversations list
+│   ├── conversations_list_screen.dart # History/conversations list
+│   ├── zen_launcher_screen.dart       # Zen Launcher home (greeting + favorites + bottom nav)
+│   └── all_apps_screen.dart           # Full app list with search & favorite toggle
+├── services/
+│   └── app_list_service.dart          # Platform channel to query/launch Android apps
 └── widgets/
     ├── message_bubble.dart            # AI and user message bubbles
     ├── typing_indicator.dart          # Animated typing dots
-    └── conversation_card.dart         # Conversation list item card
+    ├── conversation_card.dart         # Conversation list item card
+    └── launcher_bottom_nav.dart       # Bottom dock (Tasks, Journal, Timeline, Chat)
+
+android/
+└── app/src/main/
+    ├── AndroidManifest.xml            # HOME + LAUNCHER intent filters, QUERY_ALL_PACKAGES
+    └── kotlin/.../MainActivity.kt     # MethodChannel for getInstalledApps / launchApp
 ```
 
 ## Design System
@@ -64,11 +76,52 @@ lib/
 - **StatefulWidgets** with local state (no state management yet)
 - **ConstrainedBox(maxWidth: 720)** for responsive centering
 - **SafeArea** for bottom input to handle device notches
+- **Feature flags** via `lib/config.dart` (e.g. `Config.launcherEnabled` toggles launcher vs chat as home)
+- **Platform channels** — `MethodChannel('com.example.jarvis_flutter/launcher')` for querying/launching Android apps
+- **Dual intent filters** — `HOME` (replace default launcher) + `LAUNCHER` (app drawer icon)
 
 ## Navigation
 
-- `ChatScreen` → (history button) → `ConversationsListScreen`
-- `ConversationsListScreen` pops back with selected conversation via `Navigator.pop(conversation)`
+| Source | Action | Destination |
+|---|---|---|
+| (app start) | `Config.launcherEnabled` | `ZenLauncherScreen` or `ChatScreen` |
+| `ZenLauncherScreen` | tap app name | launch via `AppListService.launchApp(packageName)` |
+| `ZenLauncherScreen` | tap "More" | `AllAppsScreen` (push) |
+| `ZenLauncherScreen` | tap Chat tab (bottom nav) | `ChatScreen` (push) |
+| `ZenLauncherScreen` | Tasks/Journal/Timeline tabs | placeholder bottom sheet |
+| `AllAppsScreen` | tap star icon | toggle favorite (populates launcher's favorites list) |
+| `ChatScreen` → (history button) | → | `ConversationsListScreen` |
+| `ConversationsListScreen` | pop with conversation | `ChatScreen` receives selection |
+
+## Android Launcher Details
+
+### How it Works
+
+1. **`zen_launcher_screen.dart`** shows a greeting ("Good morning/afternoon/evening") + a text-only list of favorite apps + a "More" link + bottom navigation dock.
+2. **`all_apps_screen.dart`** shows all installed apps with search, star-toggle for favorites.
+3. **`app_list_service.dart`** uses `MethodChannel` to communicate with Kotlin `MainActivity`.
+4. **`MainActivity.kt`** queries `PackageManager` for launcher-intent activities and launches via `getLaunchIntentForPackage`.
+5. **`AndroidManifest.xml`** declares both `HOME` (replace launcher) and `LAUNCHER` (app drawer) intent filters.
+
+### Platform Channel API
+
+| Method | Input | Output | Description |
+|---|---|---|---|
+| `getInstalledApps` | — | `List<{name, packageName}>` | All apps with launcher intent |
+| `launchApp` | `{packageName}` | `bool` | Launch or open settings fallback |
+
+### Mock Mode (non-Android)
+
+When running on web, Linux, or desktop, `AppListService` returns a curated list of mock apps so the UI remains viewable during development.
+
+### Feature Flag
+
+```dart
+// lib/config.dart
+Config.launcherEnabled  // defaults to true
+// Override at build time:
+//   flutter run --dart-define=LAUNCHER_ENABLED=false
+```
 
 ## Stitch MCP Integration
 
@@ -107,10 +160,17 @@ flowchart LR
 
 ```bash
 flutter pub get
-flutter run
+flutter run                                  # runs on connected device/emulator
+flutter run --dart-define=LAUNCHER_ENABLED=false  # run without launcher (chat home)
 flutter build apk  # Android
 flutter build ios   # iOS
 ```
+
+### Dev Notes
+
+- **Google Fonts** requires internet on first run on Android/iOS. On web, fonts load from CDN.
+- For the launcher to appear as a home screen option, the device must be running Android 5.0+ (API 21+). On first launch, the system prompt asks "Complete action using Zen Assistant / Always / Just once".
+- To reset the default launcher on an emulator: Settings → Apps → Default apps → Home app.
 
 ## Last Updated
 

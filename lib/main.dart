@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'config.dart';
 import 'screens/chat_screen.dart';
+import 'screens/zen_launcher_screen.dart';
 
 void main() {
   runApp(const ZenAssistantApp());
@@ -15,7 +17,14 @@ class ZenAssistantApp extends StatelessWidget {
       title: 'Zen Assistant',
       debugShowCheckedModeBanner: false,
       theme: ZenTheme.light,
-      home: const ChatScreen(),
+      // Show the launcher home when enabled (Android), otherwise the chat screen.
+      home: Config.launcherEnabled
+          ? const ZenLauncherScreen()
+          : const ChatScreen(),
+      routes: {
+        '/chat': (_) => const ChatScreen(),
+        '/launcher': (_) => const ZenLauncherScreen(),
+      },
     );
   }
 }
