@@ -1,5 +1,8 @@
 package com.example.jarvis_flutter
 
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -34,6 +37,17 @@ class MainActivity : FlutterActivity() {
                             result.error("INVALID_ARG", "packageName required", null)
                         }
                     }
+                    "lockScreen" -> {
+                        val success = lockScreen()
+                        result.success(success)
+                    }
+                    "isDeviceAdmin" -> {
+                        result.success(isDeviceAdmin())
+                    }
+                    "requestDeviceAdmin" -> {
+                        requestDeviceAdmin()
+                        result.success(true)
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -58,6 +72,52 @@ class MainActivity : FlutterActivity() {
                 )
             }
             .sortedBy { it["name"]?.lowercase() }
+    }
+
+    /**
+     * Lock the screen via DevicePolicyManager.
+     *
+     * Only works if the app is an active device admin.
+     * Returns true if the screen was locked, false otherwise.
+     */
+    private fun lockScreen(): Boolean {
+        return try {
+            val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+            val componentName = ComponentName(this, AdminReceiver::class.java)
+            if (dpm.isAdminActive(componentName)) {
+                dpm.lockNow()
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * Whether this app is an active device admin.
+     */
+    private fun isDeviceAdmin(): Boolean {
+        val dpm = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        val componentName = ComponentName(this, AdminReceiver::class.java)
+        return dpm.isAdminActive(componentName)
+    }
+
+    /**
+     * Open the system "Activate device admin" screen so the user can
+     * grant this app device admin permission.
+     */
+    private fun requestDeviceAdmin() {
+        val componentName = ComponentName(this, AdminReceiver::class.java)
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
+            putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "Zen Assistant needs device admin permission to lock the screen when you double-tap on the launcher."
+            )
+        }
+        startActivity(intent)
     }
 
     /**

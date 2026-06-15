@@ -4,6 +4,7 @@ import '../config.dart';
 import '../models/launcher_app.dart';
 import '../services/app_list_service.dart';
 import '../services/favorites_service.dart';
+import '../services/lock_service.dart';
 import '../widgets/launcher_bottom_nav.dart';
 import 'all_apps_screen.dart';
 import 'chat_screen.dart';
@@ -103,6 +104,26 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
     }
   }
 
+  Future<void> _lockScreen() async {
+    if (!mounted) return;
+    final isAdmin = await LockService.isDeviceAdmin();
+    if (!isAdmin) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Enable device admin to lock the screen'),
+          duration: const Duration(seconds: 4),
+          action: SnackBarAction(
+            label: 'Settings',
+            onPressed: () => LockService.requestDeviceAdmin(),
+          ),
+        ),
+      );
+      return;
+    }
+    LockService.lockScreen();
+  }
+
   void _showPlaceholderSheet(String title) {
     showModalBottomSheet(
       context: context,
@@ -165,21 +186,35 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Spacer(flex: 2),
-
-                          // Greeting
-                          Text(
-                            _greeting(),
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w600,
-                              height: 38 / 30,
-                              letterSpacing: -0.01,
-                              color: ZenColors.ink,
+                          Expanded(
+                            flex: 2,
+                            child: GestureDetector(
+                              onDoubleTap: _lockScreen,
+                              child: const SizedBox.expand(),
                             ),
                           ),
 
-                          const SizedBox(height: 80),
+                          GestureDetector(
+                            onDoubleTap: _lockScreen,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Greeting
+                                Text(
+                                  _greeting(),
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w600,
+                                    height: 38 / 30,
+                                    letterSpacing: -0.01,
+                                    color: ZenColors.ink,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 80),
+                              ],
+                            ),
+                          ),
 
                           // Favorites list
                           ..._favoriteApps.take(Config.maxFavoriteApps).map(
@@ -207,7 +242,13 @@ class _ZenLauncherScreenState extends State<ZenLauncherScreen> {
                             ),
                           ),
 
-                          const Spacer(flex: 3),
+                          Expanded(
+                            flex: 3,
+                            child: GestureDetector(
+                              onDoubleTap: _lockScreen,
+                              child: const SizedBox.expand(),
+                            ),
+                          ),
                         ],
                       ),
               ),
