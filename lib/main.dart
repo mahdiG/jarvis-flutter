@@ -1,33 +1,20 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 import 'screens/chat_screen.dart';
 
 void main() {
-  runApp(const JarvisApp());
+  runApp(const ZenAssistantApp());
 }
 
-class JarvisApp extends StatelessWidget {
-  const JarvisApp({super.key});
+class ZenAssistantApp extends StatelessWidget {
+  const ZenAssistantApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Jarvis AI Chat',
+      title: 'Zen Assistant',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4), // M3 default seed
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4),
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
-      themeMode: ThemeMode.system,
+      theme: ZenTheme.light,
       home: const ChatScreen(),
     );
   }
